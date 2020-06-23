@@ -26,7 +26,7 @@ export default class Room extends EventEmitter {
                     return this.emit('peers', data.payload)
                 }
                 case 'NEW_PEER': {
-                    return console.log('room', this.peer.id, conn.peer, 'new peer')
+                    return this.emit('peer.new', data.payload)
                 }
                 case 'RESPONSE': {
                     const cb = this.tasks[data.uuid]

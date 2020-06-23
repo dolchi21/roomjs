@@ -33,11 +33,11 @@ export default class RoomHost extends EventEmitter {
                 this.emit('connection.error', error)
             })
             conn.on('open', () => this.emit('connection.open', conn))
-            this.onNewPeer()
+            this.onNewPeer(conn.peer)
             conn.on('data', data => {
                 switch (data.type) {
                     case 'LIST': {
-                        const peers = Object.keys(this.peer.connections)
+                        const peers = Object.keys(this.connections)
                         return conn.send({
                             type: 'RESPONSE', uuid: data.uuid,
                             payload: peers
@@ -73,9 +73,10 @@ export default class RoomHost extends EventEmitter {
             })
         })
     }
-    onNewPeer() {
+    onNewPeer(peerId: string) {
         Object.values(this.subscriptions['peer.new']).forEach(conn => {
-            conn.send({ type: 'NEW_PEER' })
+            if (!conn.open) return
+            conn.send({ type: 'NEW_PEER', payload: peerId })
         })
     }
     broadcast(message: any) {
