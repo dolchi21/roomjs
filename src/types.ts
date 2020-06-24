@@ -1,6 +1,11 @@
 import Peer from 'peerjs'
-
-export type RoomTask = (err: any, data?: any) => any
+export interface RoomHostConnections {
+    [key: string]: Peer.DataConnection
+}
+export interface RoomHostSubscriptions {
+    [key: string]: RoomHostConnections
+}
+export type RoomHostEvent = 'open'|'close'
 export interface RoomSendData {
     type: string
     payload?: any
@@ -9,9 +14,4 @@ export interface RoomSendData {
 export interface RoomTasks {
     [key: string]: RoomTask | undefined
 }
-export interface RoomHostConnections {
-    [key: string]: Peer.DataConnection
-}
-export interface RoomHostSubscriptions {
-    [key: string]: RoomHostConnections
-}
+export type RoomTask = (err: any, data?: any) => any
