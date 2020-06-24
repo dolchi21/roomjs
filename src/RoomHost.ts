@@ -3,6 +3,12 @@ import * as Lib from './lib'
 import { EventEmitter } from 'events'
 import { RoomHostConnections, RoomHostSubscriptions } from './types'
 
+export enum RoomHostEvent {
+    CONNECTION_CLOSE = 'connection.close',
+    CONNECTION_ERROR = 'connection.error',
+    CONNECTION_OPEN = 'connection.open',
+}
+
 function initialSubscriptions(): RoomHostSubscriptions {
     return {
         'peer.new': {}
@@ -26,13 +32,13 @@ export default class RoomHost extends EventEmitter {
             this.connections[conn.peer] = conn
             conn.on('close', () => {
                 delete this.connections[conn.peer]
-                this.emit('connection.close', conn)
+                this.emit(RoomHostEvent.CONNECTION_CLOSE, conn)
             })
             conn.on('error', (error) => {
                 error.connection = conn
-                this.emit('connection.error', error)
+                this.emit(RoomHostEvent.CONNECTION_ERROR, error)
             })
-            conn.on('open', () => this.emit('connection.open', conn))
+            conn.on('open', () => this.emit(RoomHostEvent.CONNECTION_OPEN, conn))
             this.onNewPeer(conn.peer)
             conn.on('data', data => {
                 switch (data.type) {

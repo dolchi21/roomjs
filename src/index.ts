@@ -29,3 +29,4 @@ export default class RoomJS {
         return new RoomJS(peer)
     }
 }
+export { default as RoomHost, RoomHostEvent } from './RoomHost'
